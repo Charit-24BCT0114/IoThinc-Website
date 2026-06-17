@@ -50,7 +50,7 @@ const seedAdminAccount = async () => {
     }
 };
 // Sync database structures and then run the seed sequence
-sequelize.sync({ alter: true })
+sequelize.sync()
     .then(async () => {
         console.log(' Database tables synced successfully!');
         
