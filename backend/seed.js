@@ -5,7 +5,7 @@ const seedManualData = async () => {
    
     await sequelize.sync();
 
-    // our 11 member details
+    // our 10 member details
     const memberData = [
       { name: "Jaanvi Doshi", role: "Member" },
       { name: "Arko Biswas", role: "Head of Design" },
