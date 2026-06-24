@@ -1,4 +1,3 @@
-// models/Project.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
@@ -17,13 +16,26 @@ const Project = sequelize.define('Project', {
         allowNull: false
     },
     tech_stack: {
-        type: DataTypes.STRING 
+        type: DataTypes.STRING   // comma-separated, e.g. "ESP32,Python,React"
     },
     github_url: {
         type: DataTypes.STRING
     },
     project_lead: {
-        type: DataTypes.STRING // Plain text field so anyone can lead it now
+        type: DataTypes.STRING
+    },
+    status: {
+        type: DataTypes.STRING   // "Live" | "In Development" | "Completed" | "Beta Testing"
+    },
+    image_url: {
+        type: DataTypes.STRING
+    },
+    category: {
+        type: DataTypes.STRING
+    },
+    academicYear: {
+        type: DataTypes.STRING,
+        allowNull: false         // e.g. "2025-2026"
     }
 });
 
