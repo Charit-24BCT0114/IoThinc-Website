@@ -54,7 +54,7 @@ const getStatusColor = (status: string) => {
     case 'In Development': return 'text-cyan-400 border-cyan-400';
     case 'Completed': return 'text-purple-400 border-purple-400';
     case 'Beta Testing': return 'text-yellow-400 border-yellow-400';
-    default: return 'text-gray-400 border-gray-400';
+    default: return 'text-gray-500 leading-7 border-gray-400';
   }
 };
 
@@ -147,7 +147,7 @@ const Projects: React.FC = () => {
                 <div className="p-6">
                   <span className="text-xs text-cyan-400 font-mono uppercase tracking-wide">{project.category}</span>
                   <h3 className="text-xl font-bold text-white mt-1 mb-2 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
-                  <p className="text-gray-400 mb-4 leading-relaxed text-sm">{project.description}</p>
+                  <p className="text-gray-500 leading-7 mb-4 leading-relaxed text-sm">{project.description}</p>
 
                   <div className="flex flex-wrap gap-2 mb-4">
                     {(project.tech_stack || '').split(',').map((tech, i) => (
@@ -158,7 +158,7 @@ const Projects: React.FC = () => {
                   </div>
 
                   {project.project_lead && (
-                    <p className="text-xs text-gray-500 mb-3">Lead: <span className="text-gray-400">{project.project_lead}</span></p>
+                    <p className="text-xs text-gray-500 mb-3">Lead: <span className="text-gray-500 leading-7">{project.project_lead}</span></p>
                   )}
 
                   <div className="flex space-x-4">
@@ -167,11 +167,11 @@ const Projects: React.FC = () => {
                     </button>
                     {project.github_url && project.github_url !== '#' && (
                       <a href={project.github_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center space-x-1 text-gray-400 hover:text-white transition-colors text-sm">
+                        className="flex items-center space-x-1 text-gray-500 leading-7 hover:text-white transition-colors text-sm">
                         <Github className="h-4 w-4" /><span>Code</span>
                       </a>
                     )}
-                    <button className="flex items-center space-x-1 text-gray-400 hover:text-white transition-colors text-sm">
+                    <button className="flex items-center space-x-1 text-gray-500 leading-7 hover:text-white transition-colors text-sm">
                       <ExternalLink className="h-4 w-4" /><span>Live</span>
                     </button>
                   </div>

@@ -50,7 +50,7 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Address</h4>
-                    <p className="text-gray-400">VIT University, Vellore<br />Tamil Nadu, India - 632014</p>
+                    <p className="text-gray-500 leading-7">VIT University, Vellore<br />Tamil Nadu, India - 632014</p>
                   </div>
                 </div>
 
@@ -60,7 +60,7 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Email</h4>
-                    <p className="text-gray-400">iothincvitv@gmail.com</p>
+                    <p className="text-gray-500 leading-7">iothincvitv@gmail.com</p>
                   </div>
                 </div>
 
@@ -70,7 +70,7 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Phone</h4>
-                    <p className="text-gray-400">+91 98765 43210</p>
+                    <p className="text-gray-500 leading-7">+91 98765 43210</p>
                   </div>
                 </div>
 
@@ -80,7 +80,7 @@ const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Office Hours</h4>
-                    <p className="text-gray-400">Monday - Friday: 9:00 AM - 6:00 PM<br />Saturday: 10:00 AM - 4:00 PM</p>
+                    <p className="text-gray-500 leading-7">Monday - Friday: 9:00 AM - 6:00 PM<br />Saturday: 10:00 AM - 4:00 PM</p>
                   </div>
                 </div>
               </div>
@@ -93,16 +93,16 @@ const Contact: React.FC = () => {
                 Quick Connect
               </h4>
               <div className="space-y-3">
-                <a href="#" className="block text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="#" className="block text-gray-500 leading-7 hover:text-cyan-400 transition-colors">
                   → Join our Discord Community
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="#" className="block text-gray-500 leading-7 hover:text-cyan-400 transition-colors">
                   → Follow us on LinkedIn
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="#" className="block text-gray-500 leading-7 hover:text-cyan-400 transition-colors">
                   → Check our GitHub Projects
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-cyan-400 transition-colors">
+                <a href="#" className="block text-gray-500 leading-7 hover:text-cyan-400 transition-colors">
                   → Read our Tech Blog
                 </a>
               </div>
