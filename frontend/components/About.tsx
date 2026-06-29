@@ -5,7 +5,189 @@ import { Users, Target, Lightbulb, Zap } from 'lucide-react';
 const About: React.FC = () => {
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
+  const circuitCanvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = circuitCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+  
+    const GRID = 80;
+    const NODE_CHANCE = 0.28;
+  
+    interface Node {
+      x: number; y: number;
+      gx: number; gy: number;
+      pulseOffset: number;
+      type: 'chip' | 'via' | 'junction';
+    }
+    interface Trace {
+      from: Node; to: Node;
+      progress: number; speed: number;
+      active: boolean; pulsePos: number;
+    }
+  
+    let nodes: Node[] = [];
+    let traces: Trace[] = [];
+    let animId: number;
+  
+    const build = () => {
+      canvas.width = canvas.parentElement?.offsetWidth ?? window.innerWidth;
+      canvas.height = canvas.parentElement?.offsetHeight ?? window.innerHeight;
+  
+      const cols = Math.ceil(canvas.width / GRID) + 1;
+      const rows = Math.ceil(canvas.height / GRID) + 1;
+      const grid: (Node | null)[][] = Array.from({ length: rows }, () => Array(cols).fill(null));
+  
+      nodes = [];
+      traces = [];
+  
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (Math.random() < NODE_CHANCE) {
+            const types: Node['type'][] = ['chip', 'via', 'junction'];
+            const node: Node = {
+              x: c * GRID + (Math.random() - 0.5) * 10,
+              y: r * GRID + (Math.random() - 0.5) * 10,
+              gx: c, gy: r,
+              pulseOffset: Math.random() * Math.PI * 2,
+              type: types[Math.floor(Math.random() * types.length)],
+            };
+            grid[r][c] = node;
+            nodes.push(node);
+          }
+        }
+      }
+  
+      const connected = new Set<string>();
+      nodes.forEach(node => {
+        const neighbors = [
+          grid[node.gy]?.[node.gx + 1],
+          grid[node.gy]?.[node.gx + 2],
+          grid[node.gy + 1]?.[node.gx],
+          grid[node.gy + 2]?.[node.gx],
+        ].filter(Boolean) as Node[];
+  
+        neighbors.forEach(other => {
+          const key = `${Math.min(node.gx, other.gx)},${Math.min(node.gy, other.gy)}-${Math.max(node.gx, other.gx)},${Math.max(node.gy, other.gy)}`;
+          if (connected.has(key)) return;
+          connected.add(key);
+          traces.push({
+            from: node, to: other,
+            progress: Math.random(), speed: 0.002 + Math.random() * 0.003,
+            active: Math.random() > 0.3, pulsePos: Math.random(),
+          });
+        });
+      });
+    };
+  
+    const drawNode = (node: Node, t: number) => {
+      const pulse = 0.4 + 0.3 * Math.sin(t * 0.8 + node.pulseOffset);
+      const { x, y } = node;
+  
+      if (node.type === 'chip') {
+        const s = 5;
+        ctx.strokeStyle = `rgba(0, 212, 255, ${pulse})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+        ctx.fillStyle = `rgba(0, 212, 255, ${pulse * 0.3})`;
+        ctx.fillRect(x - s, y - s, s * 2, s * 2);
+      } else if (node.type === 'via') {
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 212, 255, ${pulse})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 212, 255, ${pulse * 0.8})`;
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 212, 255, ${pulse * 0.6})`;
+        ctx.fill();
+      }
+    };
+  
+    const drawTrace = (trace: Trace) => {
+      if (!trace.active) return;
+      const { from, to } = trace;
+      const midX = to.x, midY = from.y;
+      const path: [number, number][] = [[from.x, from.y], [midX, midY], [to.x, to.y]];
+      const seg1 = Math.abs(midX - from.x);
+      const seg2 = Math.abs(to.y - midY);
+      const total = seg1 + seg2;
+      if (total < 1) return;
+  
+      const drawn = trace.progress * total;
+      ctx.beginPath();
+      ctx.lineWidth = 0.8;
+      let remaining = drawn;
+      let started = false;
+  
+      for (let i = 0; i < path.length - 1; i++) {
+        const [x1, y1] = path[i];
+        const [x2, y2] = path[i + 1];
+        const segLen = Math.abs(x2 - x1) + Math.abs(y2 - y1);
+        if (!started) { ctx.moveTo(x1, y1); started = true; }
+        if (remaining >= segLen) { ctx.lineTo(x2, y2); remaining -= segLen; }
+        else {
+          const frac = remaining / segLen;
+          ctx.lineTo(x1 + (x2 - x1) * frac, y1 + (y2 - y1) * frac);
+          break;
+        }
+      }
+      ctx.strokeStyle = `rgba(0, 212, 255, 0.12)`;
+      ctx.stroke();
+  
+      if (trace.progress >= 1) {
+        trace.pulsePos = (trace.pulsePos + 0.004) % 1;
+        let rem2 = trace.pulsePos * total;
+        let px = from.x, py = from.y;
+        for (let i = 0; i < path.length - 1; i++) {
+          const [x1, y1] = path[i];
+          const [x2, y2] = path[i + 1];
+          const segLen = Math.abs(x2 - x1) + Math.abs(y2 - y1);
+          if (rem2 <= segLen) {
+            px = x1 + (x2 - x1) * (rem2 / segLen);
+            py = y1 + (y2 - y1) * (rem2 / segLen);
+            break;
+          }
+          rem2 -= segLen;
+        }
+        const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
+        grad.addColorStop(0, 'rgba(74, 222, 128, 0.9)');
+        grad.addColorStop(1, 'rgba(74, 222, 128, 0)');
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+    };
+  
+    let t = 0;
+    const animate = (ts: number) => {
+      t = ts * 0.001;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      traces.forEach(trace => {
+        if (trace.progress < 1) trace.progress = Math.min(1, trace.progress + trace.speed);
+      });
+      traces.forEach(trace => drawTrace(trace));
+      nodes.forEach(node => drawNode(node, t));
+      animId = requestAnimationFrame(animate);
+    };
+  
+    build();
+    animId = requestAnimationFrame(animate);
+  
+    const onResize = () => build();
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(animId);
+    };
+  }, []);
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setInView(true); },
@@ -58,11 +240,15 @@ const About: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden bg-transparent py-28 pb-0">
-      {/* Black Background */}
-<div className="absolute inset-0 bg-gray-950" />
-
+{/* Dark Green Background */}
+<div className="absolute inset-0 bg-black" />
+{/* Circuit Canvas */}
+<canvas
+  ref={circuitCanvasRef}
+  className="absolute inset-0 w-full h-full pointer-events-none"
+/>
 {/* Hero → About Transition */}
-<div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-transparent via-gray-950/40 to-gray-950" />
+<div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-gray-950 via-black/80 to-black" />
 
 {/* Left Glow */}
 <div className="absolute -left-40 top-32 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-[180px]" />

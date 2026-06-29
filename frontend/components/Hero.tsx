@@ -69,8 +69,7 @@ const Hero: React.FC<HeroProps> = ({ onTabChange }) => {
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center bg-transparent">
 
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/70" />
-
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent" />
       {/* Cyan Orb */}
       <div
         className="absolute -top-32 -left-24 w-[450px] h-[450px] rounded-full bg-cyan-500/10 blur-[140px] animate-pulse"
@@ -279,6 +278,8 @@ const Hero: React.FC<HeroProps> = ({ onTabChange }) => {
         className="absolute left-[25%] bottom-[12%] h-2 w-2 rounded-full bg-white/40 blur-sm animate-pulse"
         style={{ animationDelay: "2s" }}
       />
+      {/* Hero → About transition */}
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black" />
 
     </section>
   );
