@@ -233,9 +233,9 @@ const About: React.FC = () => {
   ];
 
   const stats = [
-    { num: '500+', label: 'Active Members', color: 'text-cyan-400' },
-    { num: '50+',  label: 'Projects Built',  color: 'text-purple-400' },
-    { num: '20+',  label: 'Awards Won',      color: 'text-lime-400'   },
+    { num: '200+', label: 'Past Members', color: 'text-cyan-400' },
+    { num: '30+', label: 'Active Members', color: 'text-cyan-400' },
+    { num: '20+',  label: 'Projects Built',  color: 'text-purple-400' },
   ];
 
   return (
