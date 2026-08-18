@@ -27,3 +27,18 @@ exports.updateMember = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+/*
+exports.getMemberImage = async (req, res) => {
+    try {
+        const { data, contentType } =
+            await committeeMemberService.getMemberImage(req.params.id);
+
+        res.set('Content-Type', contentType);
+        res.set('Cache-Control', 'public, max-age=86400');
+
+        return res.send(data);
+    } catch (error) {
+        console.error('Image proxy error:', error.message);
+        return res.status(404).send('Image not found');
+    }
+};*/

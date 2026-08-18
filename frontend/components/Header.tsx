@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange }) => {
   // 4 tabs — About is part of Home now
   const navItems: { name: string; tab: TabId }[] = [
     { name: 'Home',     tab: 'home'     },
-    { name: 'Projects', tab: 'projects' },
+    //{ name: 'Projects', tab: 'projects' },
     { name: 'Team',     tab: 'team'     },
     { name: 'Contact',  tab: 'contact'  },
   ];

@@ -27,6 +27,25 @@ const FALLBACK_MEMBERS: Member[] = [
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+const getImageUrl = (url: string, name: string) => {
+  if (!url) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d1117&color=00D4FF&size=200`;
+  }
+
+  // Convert Google Drive URLs to the thumbnail endpoint
+  if (url.includes('drive.google.com')) {
+    const idMatch =
+      url.match(/[?&]id=([^&]+)/) ||
+      url.match(/\/d\/([^/]+)/);
+
+    if (idMatch?.[1]) {
+      return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w400`;
+    }
+  }
+
+  return url;
+};
+
 const MemberCard: React.FC<{ member: Member; index: number }> = ({ member, index }) => {
   const [visible, setVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -64,9 +83,12 @@ const MemberCard: React.FC<{ member: Member; index: number }> = ({ member, index
         <div className="relative h-20 w-20 rounded-full overflow-hidden
                         ring-2 ring-white/10 group-hover:ring-cyan-400/50 transition-all duration-500">
           <img
-            src={member.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0d1117&color=00D4FF&size=200`}
+            src={getImageUrl(member.image_url, member.name)}
             alt={member.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => {
+              console.log('❌ Image failed:', member.name, e.currentTarget.src);
+            }}
           />
         </div>
         <span className="absolute bottom-0 right-[calc(50%-2.5rem)] h-3 w-3 rounded-full bg-cyan-400 ring-2 ring-black" />
